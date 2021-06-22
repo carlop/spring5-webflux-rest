@@ -1,5 +1,6 @@
 package es.carlop.spring5webflux.controllers;
 
+import es.carlop.spring5webflux.config.BaseURLs;
 import es.carlop.spring5webflux.domain.Category;
 import es.carlop.spring5webflux.repositories.CategoryRepository;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +11,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/v1/categories")
+@RequestMapping(BaseURLs.CATEGORIES_URL)
 public class CategoryController {
 
     private final CategoryRepository categoryRepository;

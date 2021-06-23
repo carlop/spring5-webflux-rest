@@ -20,11 +20,13 @@ public class CategoryController {
     }
 
     @GetMapping({"", "/"})
+    @ResponseStatus(HttpStatus.OK)
     Flux<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     Mono<Category> getCategoryById(@PathVariable String id) {
         return categoryRepository.findById(id);
     }

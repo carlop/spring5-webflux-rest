@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 class CategoryControllerTest {
 
@@ -80,5 +81,45 @@ class CategoryControllerTest {
                 .exchange()
                 .expectStatus()
                 .isOk();
+    }
+
+    @Test
+    void patchCategory() {
+        BDDMockito.given(categoryRepository.findById(anyString()))
+                .willReturn(Mono.just(Category.builder().build()));
+
+        BDDMockito.given(categoryRepository.save(any(Category.class)))
+                .willReturn(Mono.just(Category.builder().build()));
+
+        Mono<Category> categoryToPatchMono = Mono.just(Category.builder().description("Desc").build());
+
+        webTestClient.patch()
+                .uri(BaseURLs.CATEGORIES_URL + "/someid")
+                .body(categoryToPatchMono, Category.class)
+                .exchange()
+                .expectStatus()
+                .isOk();
+
+        BDDMockito.verify(categoryRepository).save(any());
+    }
+
+    @Test
+    void patchCategoryNoChanges() {
+        BDDMockito.given(categoryRepository.findById(anyString()))
+                .willReturn(Mono.just(Category.builder().build()));
+
+        BDDMockito.given(categoryRepository.save(any(Category.class)))
+                .willReturn(Mono.just(Category.builder().build()));
+
+        Mono<Category> categoryToPatchMono = Mono.just(Category.builder().build());
+
+        webTestClient.patch()
+                .uri(BaseURLs.CATEGORIES_URL + "/someid")
+                .body(categoryToPatchMono, Category.class)
+                .exchange()
+                .expectStatus()
+                .isOk();
+
+        BDDMockito.verify(categoryRepository, Mockito.never()).save(any());
     }
 }

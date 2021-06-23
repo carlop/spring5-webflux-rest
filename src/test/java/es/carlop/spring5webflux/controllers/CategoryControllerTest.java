@@ -7,11 +7,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
+import org.reactivestreams.Publisher;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 class CategoryControllerTest {
 
@@ -48,5 +50,20 @@ class CategoryControllerTest {
                 .uri(BaseURLs.CATEGORIES_URL + "/someid")
                 .exchange()
                 .expectBody(Category.class);
+    }
+
+    @Test
+    void createCategory() {
+        BDDMockito.given(categoryRepository.saveAll(any(Publisher.class)))
+                .willReturn(Flux.just(Category.builder().description("Desc").build()));
+
+        Mono<Category> categoryToSaveMono = Mono.just(Category.builder().description("Desc").build());
+
+        webTestClient.post()
+                .uri(BaseURLs.CATEGORIES_URL)
+                .body(categoryToSaveMono, Category.class)
+                .exchange()
+                .expectStatus()
+                .isCreated();
     }
 }
